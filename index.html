@@ -16,12 +16,16 @@
 <meta name="viewport"
       content="width=320.1">
 <script src="js/noBounce.js" type="text/javascript"></script>
+<script src="js/jgestures.js"  type="text/javascript"></script>
+
 <script type="text/javascript">
 	noBounce.init({preventDefault: true, animate: true}); 
 </script>
   <title>한컴메뉴</title>
 
     <style>
+@import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
+
 /* Better box-sizing */
 * { box-sizing: border-box; }
 
@@ -31,8 +35,8 @@ html { font-size: 62.5%; }
 /* Default body */
 body { 
   margin: 0; 
-  opacity: 0;
-  font: 1.6rem/1.875 'Avenir Next', sans-serif;
+  opacity: 1;
+  font: 1.6rem/1.875 'Nanum Gothic', sans-serif;
 }
 
 /* Loaded body */
@@ -122,23 +126,24 @@ body.loaded {
 <script>
 var isInfoViewing = true;
 $(document).ready(function() {
+	
 	var menu = localStorage.getItem("menu");
 	var img_address = localStorage.getItem("img_address");
-	updateMenus(menu, img_address);
+	if(menu!= undefined)
+		updateMenus(menu, img_address);
 
 	getMenus();
 	resizeComponent();
 	
-	$(".menu_text,.dateInfo_container,.lunchDiner_container,.shadow").bind("click", function(){	
+	$(window).bind("tapone", function(){	
 		if(isInfoViewing===true) {
-			$(".menu_text,.dateInfo_container,.lunchDiner_container,.shadow").animate({opacity:"0"},400);		
+			$(".menu_text,.dateInfo_container,.lunchDiner_container,.shadow").css("visibility","hidden");		
 			isInfoViewing = false;
 		} else {
-			$(".menu_text,.dateInfo_container,.lunchDiner_container,.shadow").animate({opacity:"1"},400);		
+			$(".menu_text,.dateInfo_container,.lunchDiner_container,.shadow").css("visibility","visible");		
 			isInfoViewing = true;			
 		}
 	});
-
 });
 $(window).resize(function() {
 	resizeComponent();
@@ -212,11 +217,11 @@ function updateMenus(menu, img_address) {
 	$(".menu_text").html(menuString + dessert);	
 	
 	if(lunchDiner==="중식메뉴") {
-		$(".lunch_label").animate({opacity:"1"},400);
-		$(".diner_label").animate({opacity:"0.4"},400);
+		$(".lunch_label").css("background-color","rgba(255,255,255,1)");
+		$(".diner_label").css("background-color","rgba(255,255,255,0.3)");
 	} else if(lunchDiner==="석식메뉴") {
-		$(".lunch_label").animate({opacity:"0.4"},400);
-		$(".diner_label").animate({opacity:"1"},400);		
+		$(".lunch_label").css("background-color","rgba(255,255,255,0.3)");
+		$(".diner_label").css("background-color","rgba(255,255,255,1)");
 	} 
 	
 	$(".banner .background").css("background","black url("+img_address+") no-repeat center center");
@@ -224,7 +229,6 @@ function updateMenus(menu, img_address) {
 	$(".dateInfo_container").html(month+"/"+date+" "+day);
 }
 </script>
-  <script src="js/prefixfree.min.js"></script>
 
 </head>
 
@@ -242,6 +246,7 @@ function updateMenus(menu, img_address) {
   <h1 class="menu_text"></h1>
 </header>
   <script src="js/index.js"></script>
+  <script src="js/prefixfree.min.js"></script>
 
 </body>
 
