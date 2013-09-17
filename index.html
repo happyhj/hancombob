@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta charset="UTF-8">
+<script src="js/jquery.min.js"></script>
+<link rel="apple-touch-icon" href="touch-icon-iphone.png" />
+<link rel="apple-touch-icon" sizes="72x72" href="touch-icon-ipad.png" />
+<link rel="apple-touch-icon" sizes="114x114" href="touch-icon-iphone-retina.png" />
+<link rel="apple-touch-icon" sizes="144x144" href="touch-icon-ipad-retina.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="translucent black" />
+<meta name="viewport"
+      content="initial-scale=1.0">
+<meta name="viewport"
+      content="width=320.1">
+<script src="js/noBounce.js" type="text/javascript"></script>
+<script type="text/javascript">
+	noBounce.init({preventDefault: true, animate: true}); 
+</script>
+  <title>한컴메뉴</title>
+
+    <style>
+/* Better box-sizing */
+* { box-sizing: border-box; }
+
+/* 1rem = 10px */
+html { font-size: 62.5%; }
+
+/* Default body */
+body { 
+  margin: 0; 
+  opacity: 0;
+  font: 1.6rem/1.875 'Avenir Next', sans-serif;
+}
+
+/* Loaded body */
+body.loaded {
+  opacity: 1;
+  transition: 1s opacity;
+}
+
+/* Default banner */
+.banner {
+  position: relative;
+  width: 100%; 
+  height: 100%; 
+  overflow: hidden;
+  backface-visibility: hidden;
+}
+
+/* Default image container */
+.banner .background {
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  transform: translate3d(0,0,0) scale(2.6);
+  background: black url(http://sphotos-d.ak.fbcdn.net/hphotos-ak-frc3/1265627_686051021424651_1158082400_o.jpg) no-repeat center center; 
+  background-size: contain;
+}
+.banner .dateInfo_container {
+  	position: absolute;
+  	color: white;	
+  	width: 100%;
+  	text-align: left;
+  	margin-left: 15px;
+  	font-size: 30px;
+}
+/* Loaded image container */
+.loaded .banner .background {
+  transform: scale(1);
+  transition: 1.2s transform;
+}
+
+/* Other stuff */
+.banner h1 {
+  color: #EEE;
+  margin: 0;
+  font-size: 22px;
+  text-transform: uppercase;
+  text-shadow: 0 0 .3rem black;
+}
+
+.lunchDiner_container {
+	position: absolute;
+	font-size: 14px;
+	text-align: right;
+	margin-top: 10px;
+	right: 15px;
+	z-index: 2; 
+}
+.lunchDiner_container div {
+	display: inline-block;
+	width: 22px;
+	line-height: 16px;
+	text-align: center;
+	border-radius: 6px;
+	background-color: white;
+	padding-top: 1px;
+	padding-bottom: 1px;
+
+}
+.menu_text {
+	position: absolute;
+	width:100%;
+	text-align: center;
+	z-index: 1; 
+}
+.shadow {
+	position: absolute;
+	width:100%;
+	height: 100%;
+	background: -webkit-linear-gradient(top, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0) 100%);
+	z-index: 0; 
+}
+</style>
+<script>
+var isInfoViewing = true;
+$(document).ready(function() {
+	var menu = localStorage.getItem("menu");
+	var img_address = localStorage.getItem("img_address");
+	updateMenus(menu, img_address);
+
+	getMenus();
+	resizeComponent();
+	
+	$(".menu_text,.dateInfo_container,.lunchDiner_container,.shadow").bind("click", function(){	
+		if(isInfoViewing===true) {
+			$(".menu_text,.dateInfo_container,.lunchDiner_container,.shadow").animate({opacity:"0"},400);		
+			isInfoViewing = false;
+		} else {
+			$(".menu_text,.dateInfo_container,.lunchDiner_container,.shadow").animate({opacity:"1"},400);		
+			isInfoViewing = true;			
+		}
+	});
+
+});
+$(window).resize(function() {
+	resizeComponent();
+});
+
+function resizeComponent() {
+	$(".banner").css("height",String($(window).height())+"px"); 
+	$(".shadow").css("height",String($(window).height())+"px");
+	$(".menu_text").css("margin-top",String($(window).height()/2-$(".menu_text").height()/2)+"px");	
+}
+function uniToAscii(str) {
+	var regex = /\\[uU]([a-zA-Z0-9]+)/g;
+	var result;
+	while (result = regex.exec(str)) {
+	str = str.split(result[0]).join(String.fromCharCode(parseInt(result[1], 16)));
+	}
+	return str;
+}
+function getMenus() {
+
+
+	$.ajax({
+		type:"GET",
+		url:"http://graph.facebook.com/619323888097365?fields=photos",
+		dataType:"JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+		success : function(data) {
+			localStorage.setItem("menu",JSON.stringify(data['photos']['data'][0]['name']));
+			localStorage.setItem("img_address",JSON.stringify(data['photos']['data'][0]['images'][0]['source']));
+			
+			var menu = localStorage.getItem("menu");
+			var img_address = localStorage.getItem("img_address");
+
+			updateMenus(menu, img_address);
+			resizeComponent();
+
+		}
+	});
+}
+
+function updateMenus(menu, img_address) {
+//	var whole = uniToAscii(menu);
+//	alert(menu);	
+//	alert(img_address);	
+	var whole = menu;
+
+	var foo = [];
+	foo = whole.split('>');
+	foo[0] = foo[0].substr(1,foo[0].length-1);
+	var dateInfo = foo[0].split(' ');
+	var month,date,day,lunchDiner;
+	
+	month = dateInfo[0].substr(1,dateInfo[0].length-2);
+	date = dateInfo[1].substr(0,dateInfo[1].length-1); 
+	day = dateInfo[2].substr(0,dateInfo[2].length-2);
+	lunchDiner = dateInfo[3];
+
+	var menuArray = [];
+	menuArray = foo[1].split('후식');
+	var menuString = menuArray[0].substr(2,menuArray[0].length-3);
+	menuString = menuArray[0].replace(/\\N/gi,'<br/>').replace(/"/gi,'');
+
+	var dessert = "";
+	if(menuArray[1]!= undefined) {
+		dessert = menuArray[1].substr(2,menuArray[1].length);
+	}
+// 	month,date,day,lunchDiner
+//	menu,dessert
+	if(dessert!="") {
+		dessert += "<br/>" + dessert;
+	}
+	$(".menu_text").html(menuString + dessert);	
+	
+	if(lunchDiner==="중식메뉴") {
+		$(".lunch_label").animate({opacity:"1"},400);
+		$(".diner_label").animate({opacity:"0.4"},400);
+	} else if(lunchDiner==="석식메뉴") {
+		$(".lunch_label").animate({opacity:"0.4"},400);
+		$(".diner_label").animate({opacity:"1"},400);		
+	} 
+	
+	$(".banner .background").css("background","black url("+img_address+") no-repeat center center");
+	
+	$(".dateInfo_container").html(month+"/"+date+" "+day);
+}
+</script>
+  <script src="js/prefixfree.min.js"></script>
+
+</head>
+
+<body>
+
+  <!-- Header -->
+<header class="banner">
+  <div class="background"></div>
+  <div class="shadow"></div>
+  <div class="dateInfo_container">7/14 수</div>
+	<div class="lunchDiner_container">	
+	  <div class="lunch_label">중식</div>
+	  <div class="diner_label">석식</div>
+	</div>
+  <h1 class="menu_text"></h1>
+</header>
+  <script src="js/index.js"></script>
+
+</body>
+
+</html>
