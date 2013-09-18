@@ -36,9 +36,11 @@ function pullDownAction () {
 
 	setTimeout(function () {	
 		document.body.className = '';
+$("#pullDown").html("<span class=\"pullDownIcon\"></span><span class=\"pullDownLabel\">당겨서 메뉴를 가져오기...</span>");
 		myScroll.refresh();
 		document.body.className += ' loaded';
 	}, 1000);	// <-- Simulate network congestion, remove setTimeout from production!
+
 
 }
 
@@ -203,7 +205,7 @@ body {
 	-webkit-transform:rotate(-180deg) translateZ(0);
 }
 
-#pullDown.loading .pullDownIcon, #pullUp.loading .pullUpIcon {
+#pullDown.loading .pullDownIcon {
 	background-position:0 100%;
 	-webkit-transform:rotate(0deg) translateZ(0);
 	-webkit-transition-duration:0ms;
@@ -212,7 +214,7 @@ body {
 	-webkit-animation-duration:2s;
 	-webkit-animation-iteration-count:infinite;
 	-webkit-animation-timing-function:linear;
-}
+}	
 
 @-webkit-keyframes loading {
 	from { -webkit-transform:rotate(0deg) translateZ(0); }
@@ -430,6 +432,8 @@ function updateMenus(menu, img_address) {
 	
 	$(".dateInfo_container").html(month+"/"+date+" "+day);
 	
+	
+
 }
 </script>
 
