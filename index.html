@@ -406,14 +406,18 @@ function updateMenus(menu, img_address) {
 	menuString = menuArray[0].replace(/\\N/gi,'<br/>').replace(/"/gi,'');
 
 	var dessert = "";
+
 	if(menuArray[1]!= undefined) {
 		dessert = menuArray[1].substr(2,menuArray[1].length);
+		dessert = dessert.replace("\"", "");
 	}
 // 	month,date,day,lunchDiner
 //	menu,dessert
+
 	if(dessert!="") {
-		dessert += "<br/>" + dessert;
+		dessert = "후식 : " + dessert;
 	}
+
 	$(".menu_text").html(menuString + dessert);	
 	
 	if(lunchDiner==="중식메뉴") {
