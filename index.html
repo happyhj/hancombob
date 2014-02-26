@@ -1,474 +1,97 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-
-  <meta charset="UTF-8">
-<script src="js/jquery.min.js"></script>
-<link rel="apple-touch-icon" href="touch-icon-iphone.png" />
-<link rel="apple-touch-icon" sizes="72x72" href="touch-icon-ipad.png" />
-<link rel="apple-touch-icon" sizes="114x114" href="touch-icon-iphone-retina.png" />
-<link rel="apple-touch-icon" sizes="144x144" href="touch-icon-ipad-retina.png" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="translucent black" />
-<meta name="viewport"
-      content="initial-scale=1.0">
-<meta name="viewport"
-      content="width=320.1">
-<meta name="viewport" content="user-scalable=no" />
-
-<script src="js/noBounce.js" type="text/javascript"></script>
-<script src="js/jgestures.js"  type="text/javascript"></script>
-
-<script type="text/javascript">
-	noBounce.init({preventDefault: true, animate: true}); 
-</script>
-  <title>한컴메뉴</title>
-<script type="text/javascript" src="js/iscroll.js"></script>
-<script type="text/javascript">
-var myScroll,
-	pullDownEl, pullDownOffset,
-	generatedCount = 0;
-
-function pullDownAction () {
-
-	getMenus();
-
-	setTimeout(function () {	
-		document.body.className = '';
-$("#pullDown").html("<span class=\"pullDownIcon\"></span><span class=\"pullDownLabel\">당겨서 메뉴를 가져오기...</span>");
-		myScroll.refresh();
-		document.body.className += ' loaded';
-	}, 1000);	// <-- Simulate network congestion, remove setTimeout from production!
-
-
+	<title>Page Title</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.1/jquery.mobile-1.4.1.min.css">
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.4.1/jquery.mobile-1.4.1.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+<style>
+.ui-listview .ui-li-has-thumb>.ui-btn>img:first-child {
+	max-width: none;
 }
-
-
-function loaded() {
-	pullDownEl = document.getElementById('pullDown');
-	pullDownOffset = pullDownEl.offsetHeight;
-	
-	$("#scroller li").css("height",String($(window).height())+"px");	
-	
-	myScroll = new iScroll('wrapper', {
-		useTransition: true,
-		hScrollbar: false,
-		vScrollbar: false,
-		topOffset: pullDownOffset,
-		onRefresh: function () {
-			if (pullDownEl.className.match('loading')) {
-				pullDownEl.className = '';
-				pullDownEl.querySelector('.pullDownLabel').innerHTML = '당겨서 메뉴 가져오기...';
-			}
-		},
-		onScrollMove: function () {
-			if (this.y > 5 && !pullDownEl.className.match('flip')) {
-				pullDownEl.className = 'flip';
-				pullDownEl.querySelector('.pullDownLabel').innerHTML = '놓아서 메뉴 가져오기...';
-				this.minScrollY = 0;
-			} else if (this.y < 5 && pullDownEl.className.match('flip')) {
-				pullDownEl.className = '';
-				pullDownEl.querySelector('.pullDownLabel').innerHTML = '당겨서 메뉴 가져오기...';
-				this.minScrollY = -pullDownOffset;
-			} 
-		},
-		onScrollEnd: function () {
-			if (pullDownEl.className.match('flip')) {
-				pullDownEl.className = 'loading';
-				pullDownEl.querySelector('.pullDownLabel').innerHTML = '로딩중...';				
-				pullDownAction();	// Execute custom function (ajax call?)
-			}
-		}
-	});
-	
-	setTimeout(function () { document.getElementById('wrapper').style.left = '0'; }, 800);	
+li.ui-li-has-thumb > .ui-btn > h3 {
+	font-size: 28px;
 }
-
-document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
-
-document.addEventListener('DOMContentLoaded', function () { setTimeout(loaded, 200); }, false);
-</script>
-
-<style type="text/css" media="all">
-body,ul,li {
-	padding:0;
-	margin:0;
-	border:0;
+li.ui-li-has-thumb > .ui-btn > h3,li.ui-li-has-thumb > .ui-btn > p {
+	margin-left: 50px;
 }
-
-body {
-	font-size:12px;
-	-webkit-user-select:none;
-    -webkit-text-size-adjust:none;
-	font-family:helvetica;
-	background-color: #000;
+li.ui-li-has-thumb > .ui-btn > h3 {
+	margin-top: 0px;
 }
-
-#header {
-	position:absolute; z-index:2;
-	top:0; left:0;
-	width:100%;
-	height:45px;
-	line-height:45px;
-	background-color:#000;
-	padding:0;
-	color:#eee;
-	font-size:20px;
-	text-align:center;
+li.ui-li-has-thumb > .ui-btn > p {
+	margin-top: -10px;
 }
-
-#header a {
-	color:#f3f3f3;
-	text-decoration:none;
-	font-weight:bold;
-	text-shadow:0 -1px 0 rgba(0,0,0,0.5);
+.menuDetailImage {
+	width: 100%;
 }
-
-
-#wrapper {
-	position:absolute; z-index:1;
-	top:0px; bottom:0px; left:-9999px;
-	width:100%;
-	background:#000;
-	overflow:hidden;
-}
-
-#scroller {
-	position:absolute; z-index:1;
-/*	-webkit-touch-callout:none;*/
-	-webkit-tap-highlight-color:rgba(0,0,0,0);
-	width:100%;
-	padding:0;
-}
-
-#scroller ul {
-	list-style:none;
-	padding:0;
-	margin:0;
-	width:100%;
-	text-align:left;
-}
-
-#scroller li {
-	padding:0 10px;
-	height:100px;
-	border-bottom:1px solid #000;
-	border-top:1px solid #000;
-	background-color:#000;
-	font-size:14px;
-}
-
-#myFrame {
-	position:absolute;
-	top:0; left:0;
-}
-
-
-
-/**
- *
- * Pull down styles
- *
- */
-#pullDown {
-	background:#000;
-	height:40px;
-	line-height:40px;
-	padding:0px;
-	text-align: center;
-	border-bottom:1px solid #000;
-	font-weight:bold;
-	font-size:14px;
-	color:#888;
-}
-
-#pullDown .pullDownIcon {
-	display:block; float:left;
-	width:40px; height:40px;
-
-	background:url(pull-icon@2x.png) 0 0 no-repeat;
-	-webkit-background-size:40px 80px; background-size:40px 80px;
-	-webkit-transition-property:-webkit-transform;
-	-webkit-transition-duration:250ms;	
-}
-#pullDown .pullDownIcon {
-	-webkit-transform:rotate(0deg) translateZ(0);
-}
-.pullDownIcon {
-	margin-left: 10px;
-}
-#pullDown .pullDownLabel {
-	margin-left: -40px;
-}
-#pullDown.flip .pullDownIcon {
-	-webkit-transform:rotate(-180deg) translateZ(0);
-}
-
-#pullDown.loading .pullDownIcon {
-	background-position:0 100%;
-	-webkit-transform:rotate(0deg) translateZ(0);
-	-webkit-transition-duration:0ms;
-
-	-webkit-animation-name:loading;
-	-webkit-animation-duration:2s;
-	-webkit-animation-iteration-count:infinite;
-	-webkit-animation-timing-function:linear;
-}	
-
-@-webkit-keyframes loading {
-	from { -webkit-transform:rotate(0deg) translateZ(0); }
-	to { -webkit-transform:rotate(360deg) translateZ(0); }
-}
-
 </style>
-    <style>
-@import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
-
-/* Better box-sizing */
-* { box-sizing: border-box; }
-
-/* 1rem = 10px */
-html { font-size: 62.5%; }
-
-/* Default body */
-body { 
-  margin: 0; 
-  opacity: 0;
-  font: 1.6rem/1.875 'Nanum Gothic', sans-serif;
-}
-
-/* Loaded body */
-body.loaded {
-  opacity: 1;
-  transition: 1s opacity;
-}
-
-/* Default banner */
-.banner {
-  position: relative;
-  width: 100%; 
-  height: 100%; 
-  overflow: hidden;
-  backface-visibility: hidden;
-}
-
-/* Default image container */
-.banner .background {
-  position: absolute;
-  display: block;
-  width: 100%;
-  height: 100%;
-  left: 0;
-  top: 0;
-  z-index: -1;
-  transform: translate3d(0,0,0) scale(2.6);
-  background: black url(http://sphotos-d.ak.fbcdn.net/hphotos-ak-frc3/1265627_686051021424651_1158082400_o.jpg) no-repeat center center; 
-  background-size: contain;
-}
-.banner .dateInfo_container {
-  	position: absolute;
-  	color: white;	
-  	width: 100%;
-  	text-align: left;
-  	margin-left: 15px;
-  	font-size: 30px;
-}
-/* Loaded image container */
-.loaded .banner .background {
-  transform: scale(1);
-  transition: 1.2s transform;
-}
-
-/* Other stuff */
-.banner h1 {
-  color: #EEE;
-  margin: 0;
-  font-size: 22px;
-  text-transform: uppercase;
-  text-shadow: 0 0 .3rem black;
-}
-
-.lunchDiner_container {
-	position: absolute;
-	font-size: 14px;
-	text-align: right;
-	margin-top: 10px;
-	right: 15px;
-	z-index: 2; 
-	font-weight: 600;
-}
-.lunchDiner_container div {
-	display: inline-block;
-	width: 22px;
-	line-height: 16px;
-	text-align: center;
-	border-radius: 6px;
-	background-color: white;
-	padding-top: 1px;
-	padding-bottom: 1px;
-
-}
-.menu_text {
-	position: absolute;
-	width:100%;
-	text-align: center;
-	z-index: 1; 
-}
-.shadow {
-	position: absolute;
-	width:100%;
-	height: 100%;
-	background: -webkit-linear-gradient(top, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0) 100%);
-	z-index: 0; 
-}
-
-</style>
+<script id="listItemTemplate" type="text/template">
+<li>
+	<a href="#detailPage" onclick="updateDetail(<%= index %>)"><img src="<%= data.photoURL %>"><h3><%= data.date %></h3><p><%= data.mealTime %></p></a>
+</li>
+</script>
+<script id="detailTemplate" type="text/template">
+<div data-role="header" class="header ui-header ui-bar-inherit" role="banner">
+	<a role="button" data-role="button" class="ui-link ui-btn-left ui-btn ui-shadow ui-corner-all" data-rel="back">back</a>
+	<h1 class="ui-title" role="heading" aria-level="1"><%= date %></h1>
+</div><!-- /header -->
+<div role="main" class="ui-content">
+	<a href="<%= photoURL %>" target="_blank"><img class="menuDetailImage" src="<%= photoURL %>"></a>
+	<p><%= text %></p>
+</div><!-- /content -->
+<div data-role="footer" role="contentinfo" class="ui-footer ui-bar-inherit">
+	<h4 class="ui-title" role="heading" aria-level="1">happyhj@gmail.com</h4>
+</div><!-- /footer -->
+</script>
 <script>
-var isInfoViewing = true;
-$(document).ready(function() {
-	
-	var menu = localStorage.getItem("menu");
-	var img_address = localStorage.getItem("img_address");
-	if(menu!= undefined)
-		updateMenus(menu, img_address);
 
-	getMenus();
-	resizeComponent();
-	
-	$(window).bind("tapone", function(){	
-		if(isInfoViewing===true) {
-			$(".menu_text,.dateInfo_container,.lunchDiner_container,.shadow").css("visibility","hidden");		
-			isInfoViewing = false;
-		} else {
-			$(".menu_text,.dateInfo_container,.lunchDiner_container,.shadow").css("visibility","visible");		
-			isInfoViewing = true;			
-		}
-	});
+$( document ).ready(function() {
+
 });
-$(window).resize(function() {
-	resizeComponent();
-});
-
-function resizeComponent() {
-	$(".banner").css("height",String($(window).height())+"px"); 
-	$(".shadow").css("height",String($(window).height())+"px");
-	$(".menu_text").css("margin-top",String($(window).height()/2-$(".menu_text").height()/2)+"px");	
-}
-function uniToAscii(str) {
-	var regex = /\\[uU]([a-zA-Z0-9]+)/g;
-	var result;
-	while (result = regex.exec(str)) {
-	str = str.split(result[0]).join(String.fromCharCode(parseInt(result[1], 16)));
-	}
-	return str;
-}
-function getMenus() {
-
-	$.ajax({
-		type:"GET",
-		url:"http://graph.facebook.com/619323888097365?fields=photos",
-		dataType:"JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
-		success : function(data) {
-
-			localStorage.setItem("menu",JSON.stringify(data['photos']['data'][0]['name']));
-			localStorage.setItem("img_address",JSON.stringify(data['photos']['data'][0]['images'][0]['source']));
-			
-			var menu = localStorage.getItem("menu");
-			var img_address = localStorage.getItem("img_address");
-
-			updateMenus(menu, img_address);
-			resizeComponent();
-		}
+	var menus = [];
+	var selectedIndex = 0;
+	//$( "#detailPage>div" ).toolbar({ addBackBtn: true });
+	$( "#detailPage .header" ).toolbar( "option", "addBackBtn", true );	
+	$(document).on('pagebeforeshow', '#listPage', function(){     
+		$.getJSON('http://heej.net/api/hancom_menu', function(data) {
+			menus = data;
+			var compiled = _.template($("#listItemTemplate").html());
+			for(var i in menus) {
+				document.querySelector("#listPage>div>ul").insertAdjacentHTML('beforeend', compiled({ "data":menus[i], "index" : i}));
+			}
+			$('#listPage>div>ul').listview('refresh');
+		});
 	});
-}
 
-function updateMenus(menu, img_address) {
-//	var whole = uniToAscii(menu);
-//	alert(menu);	
-//	alert(img_address);	
-	var whole = menu;
-
-	var foo = [];
-	foo = whole.split('>');
-	foo[0] = foo[0].substr(1,foo[0].length-1);
-	var dateInfo = foo[0].split(' ');
-	var month,date,day,lunchDiner;
 	
-	month = dateInfo[0].substr(1,dateInfo[0].length-2);
-	date = dateInfo[1].substr(0,dateInfo[1].length-1); 
-	day = dateInfo[2].substr(0,dateInfo[2].length-2);
-	lunchDiner = dateInfo[3];
-
-	var menuArray = [];
-	menuArray = foo[1].split('후식');
-	var menuString = menuArray[0].substr(2,menuArray[0].length-3);
-	menuString = menuArray[0].replace(/\\N/gi,'<br/>').replace(/"/gi,'');
-
-	var dessert = "";
-
-	if(menuArray[1]!= undefined) {
-		dessert = menuArray[1].substr(2,menuArray[1].length);
-		dessert = dessert.replace("\"", "");
-	}
-// 	month,date,day,lunchDiner
-//	menu,dessert
-
-	if(dessert!="") {
-		dessert = "후식 : " + dessert;
+	function updateDetail(menuIndex) {
+		selectedIndex = menuIndex;
+		var compiled = _.template($("#detailTemplate").html());
+		$('#detailPage').html(compiled(menus[selectedIndex])).page('refresh'); 
 	}
 
-	$(".menu_text").html(menuString + dessert);	
-	
-	if(lunchDiner==="중식메뉴") {
-		$(".lunch_label").css("background-color","rgba(255,255,255,1)");
-		$(".diner_label").css("background-color","rgba(255,255,255,0.3)");
-		$(".diner_label").css("color","rgba(0,0,0,0.7)");
-
-	} else if(lunchDiner==="석식메뉴") {
-		$(".lunch_label").css("background-color","rgba(255,255,255,0.3)");
-		$(".diner_label").css("background-color","rgba(255,255,255,1)");
-		$(".lunch_label").css("color","rgba(0,0,0,0.7)");
-
-	} 
-	
-	$(".banner .background").css("background","black url("+img_address+") no-repeat center center");
-	
-	$(".dateInfo_container").html(month+"/"+date+" "+day);
-	
-	
-
-}
 </script>
-
 </head>
 
 <body>
-<div id="wrapper">
-	<div id="scroller">
-		<div id="pullDown">
-			<span class="pullDownIcon"></span><span class="pullDownLabel">당겨서 메뉴를 가져오기...</span>
-		</div>
 
-		<ul id="thelist">
-			<header class="banner">
-			  <div class="background"></div>
-			  <div class="shadow"></div>
-			  <div class="dateInfo_container">7/14 수</div>
-				<div class="lunchDiner_container">	
-				  <div class="lunch_label">중식</div>
-				  <div class="diner_label">석식</div>
-				</div>
-			  <h1 class="menu_text"></h1>
-			</header>
+<!-- Start of first page -->
+<div data-role="page"  id="listPage">
+	<div data-role="header">
+		<h1>한컴메뉴</h1>
+	</div><!-- /header -->
+	<div role="main" class="ui-content">
+		<ul data-role="listview">
 		</ul>
-	</div>
-</div>
-  <!-- Header -->
+	</div><!-- /content -->
+	<div data-role="footer">
+		<h4>happyhj@gmail.com</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
 
-  <script src="js/index.js"></script>
-  <script src="js/prefixfree.min.js"></script>
-
+<!-- Start of second page -->
+<div data-role="page" id="detailPage">
+</div><!-- /page -->
 </body>
-
-</html>
